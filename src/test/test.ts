@@ -8,8 +8,8 @@
 
 import * as fs from 'fs';
 import * as discrepances from "discrepances";
-import { LineSplitter, LineJoiner, EscapeCharsTransform, forEndOf } from "../..";
-import { Readable, ReadableOptions } from 'stream';
+import { LineSplitter, LineJoiner, EscapeCharsTransform, LineElement, streamSignalsClose } from "../..";
+import { Readable, ReadableOptions, Transform, TransformCallback } from 'stream';
 
 async function compareFiles(expectedFileName:string, obtainedFileName:string){
     var expected = await fs.promises.readFile(expectedFileName,'latin1');
@@ -24,7 +24,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var so = fs.createWriteStream('work/test/out-lines.txt', {encoding:'utf8'});
         si.pipe(lineSplitter).pipe(lineJoiner).pipe(so);
-        await forEndOf(so);
+        await streamSignalsClose(so);
         await compareFiles('src/test/fixtures/lines.txt','work/test/out-lines.txt');
     });
     it('pipe row by row and escape', async function(){
@@ -33,7 +33,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-lines-escaped.txt', {encoding:'utf8'});
-        await forEndOf(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsClose(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/lines-braces-escaped.txt','work/test/out-lines-escaped.txt');
     });
     class ReadFake extends Readable{
@@ -64,7 +64,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-fake1.txt');
-        await forEndOf(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsClose(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1.txt','work/test/out-fake1.txt');
     })
     it('fake input to splitter CRLF', async function(){
@@ -78,7 +78,24 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-fake1-cr.txt');
-        await forEndOf(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsClose(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1-cr.txt','work/test/out-fake1-cr.txt');
+    })
+    it('number lines', async function(){
+        var si = fs.createReadStream('src/test/fixtures/lines.txt', {encoding:'utf8'});
+        var lineSplitter = new LineSplitter({})
+        var lineJoiner = new LineJoiner({});
+        var myLineNumber=0;
+        var numberLines = new Transform({
+            objectMode:true,
+            transform(chunk:LineElement, _encoding:string, next: TransformCallback) {
+                myLineNumber=(myLineNumber||0)+1;
+                this.push({line:myLineNumber+' '+chunk.line.toString('utf8'), eol:'\r\n'});
+                next();
+            }
+        })
+        var so = fs.createWriteStream('work/test/out-lines-numbered.txt', {encoding:'utf8'});
+        await streamSignalsClose(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
+        await compareFiles('src/test/fixtures/lines-numbered.txt','work/test/out-lines-numbered.txt');
     })
 });

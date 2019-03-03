@@ -1,5 +1,9 @@
 /// <reference types="node" />
 import { Transform, TransformCallback, TransformOptions, Stream } from "stream";
+export declare type LineElement = {
+    line: Buffer;
+    eol: Buffer;
+};
 export declare class LineSplitter extends Transform {
     private internalBuffer;
     private eol13;
@@ -10,10 +14,7 @@ export declare class LineSplitter extends Transform {
 }
 export declare class LineJoiner extends Transform {
     constructor(options: TransformOptions);
-    _transform(chunk: {
-        line: Buffer;
-        eol: Buffer;
-    }, _encoding: string, next: TransformCallback): void;
+    _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
 }
 export declare type EscapeCharsTransformOptions = {
     charsToEscape: string;
@@ -23,10 +24,7 @@ export declare class EscapeCharsTransform extends Transform {
     private charsMap;
     private prefixBuffer;
     constructor(options: EscapeCharsTransformOptions);
-    _transform(chunk: {
-        line: Buffer;
-        eol: Buffer;
-    }, _encoding: string, next: TransformCallback): void;
+    _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
 }
-export declare function forEndOf(stream: Stream): Promise<void>;
+export declare function streamSignalsClose(stream: Stream): Promise<void>;
 //# sourceMappingURL=line-splitter.d.ts.map

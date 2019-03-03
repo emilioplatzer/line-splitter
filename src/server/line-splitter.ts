@@ -2,6 +2,8 @@
 
 import { Transform, TransformCallback, TransformOptions, Stream } from "stream"
 
+export type LineElement = {line:Buffer, eol:Buffer};
+
 export class LineSplitter extends Transform {
     private internalBuffer:Buffer[]=[];
     private eol13=Buffer.from('\r\n');
@@ -31,7 +33,7 @@ export class LineJoiner extends Transform {
     constructor(options:TransformOptions) {
         super({writableObjectMode:true, ...options});
     }
-    _transform(chunk:{line:Buffer, eol:Buffer}, _encoding:string, next:TransformCallback){
+    _transform(chunk:LineElement, _encoding:string, next:TransformCallback){
         this.push(chunk.line);
         this.push(chunk.eol);
         next();
@@ -54,7 +56,7 @@ export class EscapeCharsTransform extends Transform {
             self.charsMap[ascii]=true;
         })
     }
-    _transform(chunk:{line:Buffer, eol:Buffer}, _encoding:string, next:TransformCallback){
+    _transform(chunk:LineElement, _encoding:string, next:TransformCallback){
         var index=0;
         var pos=0;
         var parts:Buffer[]=[];
@@ -72,7 +74,7 @@ export class EscapeCharsTransform extends Transform {
     }
 }
 
-export async function forEndOf(stream:Stream):Promise<void>{
+export async function streamSignalsClose(stream:Stream):Promise<void>{
     return new Promise(function(resolve, reject){
         stream.on('error', reject);
         stream.on('close', resolve)

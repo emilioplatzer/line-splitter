@@ -2,10 +2,11 @@
     "compilerOptions": {
         "declaration": true,
         "outDir": "x:\\this-dir-must-not-be-created",
-        "sourceMap": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
         "moduleResolution": "node",
-        "lib":["es2015"],
-        "target": "es5",
+        "lib":["es2018"],
+        "target": "es2017",
         "strict": true, // por ahora lo dejamos deshabilitado aunque sirve activarlo antes de pushear para ver algunos posibles errores.
         "skipLibCheck": true, //para que no haga chequeo de tipos en los declaration files dentro de node-modules(pg-promise-strict, express, node)
         "module": "umd",
@@ -16,6 +17,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "removeComments": false
     },
 }

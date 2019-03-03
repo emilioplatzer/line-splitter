@@ -3,31 +3,38 @@
 import { Transform, TransformCallback, TransformOptions, Stream } from "stream"
 
 export class LineSplitter extends Transform {
-    private internalBuffer:Buffer|null=null;
+    private internalBuffer:Buffer[]=[];
+    private eol13=Buffer.from('\r\n');
+    private eol10=Buffer.from('\n');
     constructor(options:TransformOptions) {
-        super(options);
+        super({readableObjectMode:true, ...options});
     }
     _transform(chunk:Buffer, _encoding:string, next:TransformCallback){
         var index=0;
         var pos:number;
-        var buf2Send:Buffer;
         while((pos=chunk.indexOf(10,index))!=-1){
-            if(this.internalBuffer){
-                chunk.copy(this.internalBuffer,this.internalBuffer.byteLength,index,pos+1);
-                buf2Send=this.internalBuffer;
-                this.internalBuffer=null;
-            }else{
-                buf2Send=chunk.slice(index,pos+1);
-            }
-            this.push(buf2Send);
+            var with13 = pos && chunk[pos-1]==13;
+            this.push({line:Buffer.concat([...this.internalBuffer, chunk.slice(index,pos-(with13?1:0))]), eol:with13?this.eol13:this.eol10})
+            this.internalBuffer=[];
             index=pos+1;
         }
-        this.internalBuffer = chunk.slice(index);
+        this.internalBuffer.push(chunk.slice(index));
         next();
     }
     _flush(done:TransformCallback){
-        this.push(this.internalBuffer);
+        this.push({line:Buffer.concat(this.internalBuffer), eol:Buffer.from('')});
         done();
+    }
+}          
+
+export class LineJoiner extends Transform {
+    constructor(options:TransformOptions) {
+        super({writableObjectMode:true, ...options});
+    }
+    _transform(chunk:{line:Buffer, eol:Buffer}, _encoding:string, next:TransformCallback){
+        this.push(chunk.line);
+        this.push(chunk.eol);
+        next();
     }
 }          
 
@@ -38,7 +45,7 @@ export class EscapeCharsTransform extends Transform {
     private prefixBuffer:Buffer;
     constructor(options:EscapeCharsTransformOptions) {
         var {charsToEscape, prefixChar, ...superOptions} = options;
-        super(superOptions);
+        super({objectMode:true, ...superOptions});
         this.prefixBuffer=Buffer.alloc(1,prefixChar);
         this.charsMap={};
         var self=this;
@@ -47,18 +54,20 @@ export class EscapeCharsTransform extends Transform {
             self.charsMap[ascii]=true;
         })
     }
-    _transform(chunk:Buffer, _encoding:string, next:TransformCallback){
+    _transform(chunk:{line:Buffer, eol:Buffer}, _encoding:string, next:TransformCallback){
         var index=0;
         var pos=0;
-        while(pos<chunk.byteLength){
-            if(this.charsMap[chunk[pos]]){
-                this.push(chunk.slice(index, pos));
-                this.push(this.prefixBuffer);
+        var parts:Buffer[]=[];
+        while(pos<chunk.line.byteLength){
+            if(this.charsMap[chunk.line[pos]]){
+                parts.push(chunk.line.slice(index,pos));
+                parts.push(this.prefixBuffer);
                 index=pos;
             }
             pos++;
         }
-        this.push(chunk.slice(index));
+        parts.push(chunk.line.slice(index));
+        this.push({line:Buffer.concat(parts), eol:chunk.eol})
         next();
     }
 }

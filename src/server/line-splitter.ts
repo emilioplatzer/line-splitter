@@ -76,9 +76,9 @@ export class EscapeCharsTransform extends Transform {
     }
 }
 
-export async function streamSignalsClose(stream:Stream):Promise<void>{
+export async function streamSignalsFinish(stream:Stream):Promise<void>{
     return new Promise(function(resolve, reject){
         stream.on('error', reject);
-        stream.on('close', resolve)
+        stream.on('finish', resolve)
     });
 }

@@ -26,5 +26,5 @@ export declare class EscapeCharsTransform extends Transform {
     constructor(options: EscapeCharsTransformOptions);
     _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
 }
-export declare function streamSignalsFinish(stream: Stream): Promise<void>;
+export declare function streamSignalsDone(stream: Stream): Promise<void>;
 //# sourceMappingURL=line-splitter.d.ts.map

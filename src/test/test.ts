@@ -8,7 +8,7 @@
 
 import * as fs from 'fs';
 import * as discrepances from "discrepances";
-import { LineSplitter, LineJoiner, EscapeCharsTransform, LineElement, streamSignalsFinish } from "../..";
+import { LineSplitter, LineJoiner, EscapeCharsTransform, LineElement, streamSignalsDone } from "../..";
 import { Readable, ReadableOptions, Transform, TransformCallback } from 'stream';
 
 async function compareFiles(expectedFileName:string, obtainedFileName:string){
@@ -24,7 +24,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var so = fs.createWriteStream('work/test/out-lines.txt', {encoding:'utf8'});
         si.pipe(lineSplitter).pipe(lineJoiner).pipe(so);
-        await streamSignalsFinish(so);
+        await streamSignalsDone(so);
         await compareFiles('src/test/fixtures/lines.txt','work/test/out-lines.txt');
     });
     it('pipe row by row and escape', async function(){
@@ -33,7 +33,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-lines-escaped.txt', {encoding:'utf8'});
-        await streamSignalsFinish(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/lines-braces-escaped.txt','work/test/out-lines-escaped.txt');
     });
     class ReadFake extends Readable{
@@ -64,7 +64,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-fake1.txt');
-        await streamSignalsFinish(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1.txt','work/test/out-fake1.txt');
     })
     it('fake input to splitter CRLF', async function(){
@@ -78,7 +78,7 @@ describe('line-splitter', function(){
         var lineJoiner = new LineJoiner({});
         var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
         var so = fs.createWriteStream('work/test/out-fake1-cr.txt');
-        await streamSignalsFinish(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1-cr.txt','work/test/out-fake1-cr.txt');
     })
     it('number lines', async function(){
@@ -95,7 +95,7 @@ describe('line-splitter', function(){
             }
         })
         var so = fs.createWriteStream('work/test/out-lines-numbered.txt', {encoding:'utf8'});
-        await streamSignalsFinish(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
+        await streamSignalsDone(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/lines-numbered.txt','work/test/out-lines-numbered.txt');
     })
     it('number lines in file that ends with LF', async function(){
@@ -112,7 +112,7 @@ describe('line-splitter', function(){
             }
         })
         var so = fs.createWriteStream('work/test/out-lines-lf-numbered.txt', {encoding:'utf8'});
-        await streamSignalsFinish(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
+        await streamSignalsDone(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/lines-lf-numbered.txt','work/test/out-lines-lf-numbered.txt');
     })
 });

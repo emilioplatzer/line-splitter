@@ -24,7 +24,9 @@ export class LineSplitter extends Transform {
         next();
     }
     _flush(done:TransformCallback){
-        this.push({line:Buffer.concat(this.internalBuffer), eol:Buffer.from('')});
+        if(this.internalBuffer.length && this.internalBuffer.find(x=>x.length>0 || x.byteLength>0)){
+            this.push({line:Buffer.concat(this.internalBuffer), eol:Buffer.from('')});
+        }
         done();
     }
 }          

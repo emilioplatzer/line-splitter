@@ -90,12 +90,29 @@ describe('line-splitter', function(){
             objectMode:true,
             transform(chunk:LineElement, _encoding:string, next: TransformCallback) {
                 myLineNumber=(myLineNumber||0)+1;
-                this.push({line:myLineNumber+' '+chunk.line.toString('utf8'), eol:'\r\n'});
+                this.push({line:myLineNumber+' '+chunk.line.toString('utf8'), eol:chunk.eol});
                 next();
             }
         })
         var so = fs.createWriteStream('work/test/out-lines-numbered.txt', {encoding:'utf8'});
         await streamSignalsClose(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/lines-numbered.txt','work/test/out-lines-numbered.txt');
+    })
+    it('number lines in file that ends with LF', async function(){
+        var si = fs.createReadStream('src/test/fixtures/lines-lf.txt', {encoding:'utf8'});
+        var lineSplitter = new LineSplitter({})
+        var lineJoiner = new LineJoiner({});
+        var myLineNumber=0;
+        var numberLines = new Transform({
+            objectMode:true,
+            transform(chunk:LineElement, _encoding:string, next: TransformCallback) {
+                myLineNumber=(myLineNumber||0)+1;
+                this.push({line:myLineNumber+' '+chunk.line.toString('utf8'), eol:'\r\n'});
+                next();
+            }
+        })
+        var so = fs.createWriteStream('work/test/out-lines-lf-numbered.txt', {encoding:'utf8'});
+        await streamSignalsClose(si.pipe(lineSplitter).pipe(numberLines).pipe(lineJoiner).pipe(so));
+        await compareFiles('src/test/fixtures/lines-lf-numbered.txt','work/test/out-lines-lf-numbered.txt');
     })
 });

@@ -31,9 +31,16 @@ describe('line-splitter', function(){
         var si = fs.createReadStream('src/test/fixtures/lines.txt', {encoding:'utf8'});
         var lineSplitter = new LineSplitter({})
         var lineJoiner = new LineJoiner({});
-        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
+        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'}, 'lines')
         var so = fs.createWriteStream('work/test/out-lines-escaped.txt', {encoding:'utf8'});
         await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
+        await compareFiles('src/test/fixtures/lines-braces-escaped.txt','work/test/out-lines-escaped.txt');
+    });
+    it('only escape', async function(){
+        var si = fs.createReadStream('src/test/fixtures/lines.txt', {encoding:'utf8'});
+        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
+        var so = fs.createWriteStream('work/test/out-lines-escaped.txt', {encoding:'utf8'});
+        await streamSignalsDone(si.pipe(escaper).pipe(so));
         await compareFiles('src/test/fixtures/lines-braces-escaped.txt','work/test/out-lines-escaped.txt');
     });
     class ReadFake extends Readable{
@@ -62,7 +69,7 @@ describe('line-splitter', function(){
         ]});
         var lineSplitter = new LineSplitter({})
         var lineJoiner = new LineJoiner({});
-        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
+        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'}, 'lines')
         var so = fs.createWriteStream('work/test/out-fake1.txt');
         await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1.txt','work/test/out-fake1.txt');
@@ -76,7 +83,7 @@ describe('line-splitter', function(){
         ]});
         var lineSplitter = new LineSplitter({})
         var lineJoiner = new LineJoiner({});
-        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'})
+        var escaper = new EscapeCharsTransform({charsToEscape:'{}', prefixChar:'\\'}, 'lines')
         var so = fs.createWriteStream('work/test/out-fake1-cr.txt');
         await streamSignalsDone(si.pipe(lineSplitter).pipe(escaper).pipe(lineJoiner).pipe(so));
         await compareFiles('src/test/fixtures/fake1-cr.txt','work/test/out-fake1-cr.txt');

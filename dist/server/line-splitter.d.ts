@@ -16,6 +16,7 @@ export declare class LineJoiner extends Transform {
     constructor(options: TransformOptions);
     _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
 }
+export declare type EscapeCharsTransformMode = 'lines';
 export declare type EscapeCharsTransformOptions = {
     charsToEscape: string;
     prefixChar: string;
@@ -23,8 +24,9 @@ export declare type EscapeCharsTransformOptions = {
 export declare class EscapeCharsTransform extends Transform {
     private charsMap;
     private prefixBuffer;
-    constructor(options: EscapeCharsTransformOptions);
-    _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
+    private mode;
+    constructor(options: EscapeCharsTransformOptions, mode?: EscapeCharsTransformMode);
+    _transform(chunk: LineElement | Buffer, _encoding: string, next: TransformCallback): void;
 }
 export declare function streamSignalsDone(stream: Stream): Promise<void>;
 //# sourceMappingURL=line-splitter.d.ts.map

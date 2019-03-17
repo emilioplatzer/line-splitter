@@ -42,36 +42,49 @@ export class LineJoiner extends Transform {
     }
 }          
 
+export type EscapeCharsTransformMode='lines';
 export type EscapeCharsTransformOptions={charsToEscape:string, prefixChar:string} & TransformOptions;
 
 export class EscapeCharsTransform extends Transform {
     private charsMap:{[key:string]: true};
     private prefixBuffer:Buffer;
-    constructor(options:EscapeCharsTransformOptions) {
+    private mode:EscapeCharsTransformMode|undefined;
+    constructor(options:EscapeCharsTransformOptions, mode?:EscapeCharsTransformMode) {
         var {charsToEscape, prefixChar, ...superOptions} = options;
-        super({objectMode:true, ...superOptions});
+        super({objectMode:mode==='lines', ...superOptions});
         this.prefixBuffer=Buffer.alloc(1,prefixChar);
         this.charsMap={};
+        this.mode=mode;
         var self=this;
         charsToEscape.split('').forEach(function(char){
             var ascii:number=char.charCodeAt(0);
             self.charsMap[ascii]=true;
         })
     }
-    _transform(chunk:LineElement, _encoding:string, next:TransformCallback){
+    _transform(chunk:LineElement|Buffer, _encoding:string, next:TransformCallback){
         var index=0;
         var pos=0;
-        var parts:Buffer[]=[];
-        while(pos<chunk.line.byteLength){
-            if(this.charsMap[chunk.line[pos]]){
-                parts.push(chunk.line.slice(index,pos));
+        var line:Buffer;
+        var parts:{push:(part:Buffer)=>void};
+        if(this.mode === 'lines'){
+            parts=[] as Buffer[];
+            line=(chunk as LineElement).line;
+        }else{
+            parts=this;
+            line=chunk as Buffer;
+        }
+        while(pos<line.byteLength){
+            if(this.charsMap[line[pos]]){
+                parts.push(line.slice(index,pos));
                 parts.push(this.prefixBuffer);
                 index=pos;
             }
             pos++;
         }
-        parts.push(chunk.line.slice(index));
-        this.push({line:Buffer.concat(parts), eol:chunk.eol})
+        parts.push(line.slice(index));
+        if(this.mode === 'lines'){
+            this.push({line:Buffer.concat(parts as Buffer[]), eol:(chunk as LineElement).eol})
+        }
         next();
     }
 }

@@ -93,6 +93,7 @@ export async function streamSignalsDone(stream:Stream):Promise<void>{
     return new Promise(function(resolve, reject){
         stream.on('error', reject );
         stream.on('close', resolve);
-        stream.on('end' ,  resolve);
+        stream.on('end',   resolve);
+        stream.on('finish',resolve);
     });
 }

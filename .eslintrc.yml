@@ -44,7 +44,9 @@ rules:
   # Best Practices
   accessor-pairs: 2
   block-scoped-var: 0
-  complexity: [2, 6]
+  # complexity, no-redeclare y no-void apagadas: el único .js linteado es dist (generado
+  # por tsc, el fuente es TypeScript) y los helpers que inyecta tsc las disparan
+  complexity: 0
   consistent-return: 0
   curly: 0
   default-case: 0
@@ -82,7 +84,7 @@ rules:
   no-octal-escape: 2
   no-octal: 2
   no-proto: 2
-  no-redeclare: 2
+  no-redeclare: 0
   no-return-assign: 2
   no-script-url: 2
   no-self-compare: 2
@@ -91,7 +93,7 @@ rules:
   no-unused-expressions: 2
   no-useless-call: 2
   no-useless-concat: 2
-  no-void: 2
+  no-void: 0
   no-warning-comments: 0
   no-with: 2
   radix: 2

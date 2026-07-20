@@ -22,10 +22,10 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.0.0",
-    "best-globals": "^0.10.24",
     "discrepances": "^0.2.4",
     "mocha": "^11.7.1",
     "nyc": "^17.1.0",
+    "qa-control": "^0.7.5",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
@@ -75,6 +75,10 @@
     "test-appveyor": true,
     "type": "lib",
     "stage": "designing",
-    "coverage": 100
+    "coverage": 100,
+    "gha": "all",
+    "silenced": [
+      "first_lines_does_not_match_in_file_1"
+    ]
   }
 }

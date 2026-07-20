@@ -1,6 +1,5 @@
-/// <reference types="node" />
 import { Transform, TransformCallback, TransformOptions, Stream } from "stream";
-export declare type LineElement = {
+export type LineElement = {
     line: Buffer;
     eol: Buffer;
 };
@@ -16,8 +15,8 @@ export declare class LineJoiner extends Transform {
     constructor(options: TransformOptions);
     _transform(chunk: LineElement, _encoding: string, next: TransformCallback): void;
 }
-export declare type EscapeCharsTransformMode = 'lines';
-export declare type EscapeCharsTransformOptions = {
+export type EscapeCharsTransformMode = 'lines';
+export type EscapeCharsTransformOptions = {
     charsToEscape: string;
     prefixChar: string;
 } & TransformOptions;

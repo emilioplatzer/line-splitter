@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "declaration": true,
+        "newLine": "crlf",
         "outDir": "x:\\this-dir-must-not-be-created",
         "inlineSourceMap": true,
         "inlineSources": true,

@@ -27,6 +27,42 @@ también disponible en:
 
 <!--lang:es-->
 
+El objetivo de `line-splitter` es procesar un stream línea por línea y que las
+líneas se vuelvan a juntar **en el mismo orden en que se separaron**. Si el
+transformador intermedio procesa de a una línea por vez —aunque cada línea
+implique trabajo asincrónico, como insertarla en una base de datos y esperar el
+id generado— el orden de salida está garantizado.
+
+Lo que no preserva el orden es paralelizar por cuenta propia (aceptar varias
+líneas a la vez y emitir cada respuesta a medida que llega). Para procesar en
+paralelo sin perder el orden se puede intercalar
+[parallel-transform](https://www.npmjs.com/package/parallel-transform), que
+mantiene una ventana de N transformaciones en vuelo y emite en orden.
+
+<!-- Pendiente (julio 2026): parallel-transform (mafintosh) está abandonado (npm 1.2.0 de 2019)
+y tiene bugs conocidos con arreglos sin mergear: PR #6 (usar _final en vez de _flush; arregla
+los issues #4 y #11, el finish prematuro / cuelgue al final del pipeline) y PR #10 (manejo de
+undefined). Más adelante: aplicar esos dos PRs en el fork emilioplatzer/parallel-transform y
+publicarlo (u otro nombre, o dependencia git), o cambiar la mención de arriba por pipeline-pipe
+(reescritura TS publicada en npm, 0.3.0 de 2021, también dormida). Ojo con el fork de Marko298:
+su fix tiene una errata (this.ondrain sin guion bajo). -->
+
+<!--lang:en--]
+
+The goal of `line-splitter` is to process a stream line by line and get the
+lines joined back **in the same order they were split**. If the intermediate
+transform processes one line at a time —even when each line involves
+asynchronous work, like inserting it into a database and waiting for the
+generated id— the output order is guaranteed.
+
+What does not preserve the order is rolling your own parallelization (accepting
+several lines at once and pushing each response as it arrives). To process in
+parallel without losing the order you can pipe through
+[parallel-transform](https://www.npmjs.com/package/parallel-transform), which
+keeps a window of N in-flight transforms and emits in order.
+
+[!--lang:es-->
+
 ## Instalación
 
 <!--lang:en--]

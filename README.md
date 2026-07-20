@@ -17,6 +17,19 @@ also available in:
 [![Spanish](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-es.png)](LEEME.md)
 
 
+The goal of `line-splitter` is to process a stream line by line and get the
+lines joined back **in the same order they were split**. If the intermediate
+transform processes one line at a time —even when each line involves
+asynchronous work, like inserting it into a database and waiting for the
+generated id— the output order is guaranteed.
+
+What does not preserve the order is rolling your own parallelization (accepting
+several lines at once and pushing each response as it arrives). To process in
+parallel without losing the order you can pipe through
+[parallel-transform](https://www.npmjs.com/package/parallel-transform), which
+keeps a window of N in-flight transforms and emits in order.
+
+
 ## Install
 
 

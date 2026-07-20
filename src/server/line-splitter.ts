@@ -29,7 +29,7 @@ export class LineSplitter extends Transform {
         }
         done();
     }
-}          
+}
 
 export class LineJoiner extends Transform {
     constructor(options:TransformOptions) {
@@ -40,7 +40,7 @@ export class LineJoiner extends Transform {
         this.push(chunk.eol);
         next();
     }
-}          
+}
 
 export type EscapeCharsTransformMode='lines';
 export type EscapeCharsTransformOptions={charsToEscape:string, prefixChar:string} & TransformOptions;

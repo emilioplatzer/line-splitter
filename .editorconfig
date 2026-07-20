@@ -1,0 +1,24 @@
+root = true
+
+# Defaults for every file
+[*]
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+
+
+[src/test/fixtures/fake1-cr.txt]
+insert_final_newline = false
+
+[src/test/fixtures/fake1.txt]
+insert_final_newline = false
+
+[src/test/fixtures/lines-braces-escaped.txt]
+insert_final_newline = false
+
+[src/test/fixtures/lines-numbered.txt]
+insert_final_newline = false
+
+[src/test/fixtures/lines.txt]
+insert_final_newline = false

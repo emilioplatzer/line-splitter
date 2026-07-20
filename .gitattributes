@@ -1,0 +1,6 @@
+# Normalize to LF in the repo on commit; check out with the OS-native EOL.
+* text=auto
+
+src/test/fixtures/fake1.txt text eol=lf
+src/test/fixtures/lines-lf.txt text eol=lf
+src/test/test.ts text eol=lf

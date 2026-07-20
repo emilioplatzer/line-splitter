@@ -26,6 +26,6 @@
             "outFiles": [
                 "${workspaceFolder}/lib/**/*.js"
             ]
-        }        
+        }
     ]
 }

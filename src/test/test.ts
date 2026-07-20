@@ -67,7 +67,7 @@ describe('line-splitter', function(){
         var si=new ReadFake({parts:[
             'media ','línea\n',
             'dos líneas\nque se mandaron juntas\n',
-            'ahora',' van',' separadas',' por',' palabras\nmás',' o menos. Quizás\nmucho menos.', 
+            'ahora',' van',' separadas',' por',' palabras\nmás',' o menos. Quizás\nmucho menos.',
             '\nFin.'
         ]});
         var lineSplitter = new LineSplitter({})
@@ -81,7 +81,7 @@ describe('line-splitter', function(){
         var si=new ReadFake({parts:[
             'media ','línea\r\n',
             'dos líneas\r\nque se mandaron juntas\r',
-            '\nahora',' van',' separadas',' por',' palabras\r\nmás',' o menos. Quizás\r\nmucho menos.', 
+            '\nahora',' van',' separadas',' por',' palabras\r\nmás',' o menos. Quizás\r\nmucho menos.',
             '\r\nFin.'
         ]});
         var lineSplitter = new LineSplitter({})

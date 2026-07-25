@@ -22,7 +22,7 @@
     "nyc": "^18.0.0",
     "qa-control": "^0.7.5",
     "source-map-support": "^0.5.21",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.2"
   },
   "main": "dist/server/line-splitter.js",
   "types": "dist/server/line-splitter.d.ts",

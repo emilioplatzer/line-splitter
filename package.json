@@ -27,19 +27,17 @@
     "nyc": "^17.1.0",
     "qa-control": "^0.7.5",
     "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "main": "dist/server/line-splitter.js",
   "types": "dist/server/line-splitter.d.ts",
   "engines": {
-    "node": ">= 8"
+    "node": ">= 22"
   },
   "scripts": {
     "tsc": "tsc",
-    "test": "mocha --reporter spec --bail --check-leaks --exit",
-    "test-ci": "nyc --reporter=lcov --reporter=text-summary --reporter=html mocha --exit --check-leaks",
-    "test-cov": "nyc mocha --exit --check-leaks",
+    "test": "npm run build && mocha --reporter spec --bail --check-leaks --exit",
+    "test-ci": "npm run build && nyc --reporter=lcov --reporter=text-summary --reporter=html mocha --exit --check-leaks",
     "build": "tsc -p tsconfig-server.json && tsc -p tsconfig-test.json",
     "build-without-err": "(tsc -p tsconfig-server.json || echo \"continue w/error\") && (tsc -p tsconfig-test.json  || echo \"continue w/error\")"
   },
@@ -55,9 +53,6 @@
     "include": [
       "dist/**/*.js",
       "src/server/**"
-    ],
-    "x-require": [
-      "ts-node/register"
     ],
     "reporter": [
       "html",

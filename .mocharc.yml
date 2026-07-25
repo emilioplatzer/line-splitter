@@ -1,6 +1,5 @@
 require:
-  - ts-node/register
   - source-map-support/register
-spec: src/test/*.ts
+spec: local-test/test/*.js
 full-trace: true
 bail: true

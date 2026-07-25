@@ -1,7 +1,7 @@
 {
   "name": "line-splitter",
   "description": "Transform stream for line splitting",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "author": "Codenautas <codenautas@googlegroups.com>",
   "license": "MIT",
   "files": [

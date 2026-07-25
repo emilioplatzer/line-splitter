@@ -38,7 +38,7 @@
   "scripts": {
     "tsc": "tsc",
     "test": "mocha --reporter spec --bail --check-leaks --exit",
-    "test-ci": "nyc --reporter=lcov --reporter=text-lcov mocha --exit --check-leaks",
+    "test-ci": "nyc --reporter=lcov --reporter=text-summary --reporter=html mocha --exit --check-leaks",
     "test-cov": "nyc mocha --exit --check-leaks",
     "build": "tsc -p tsconfig-server.json && tsc -p tsconfig-test.json",
     "build-without-err": "(tsc -p tsconfig-server.json || echo \"continue w/error\") && (tsc -p tsconfig-test.json  || echo \"continue w/error\")"

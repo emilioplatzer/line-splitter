@@ -17,10 +17,10 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.0.0",
+    "c8": "^12.0.0",
     "discrepances": "^0.2.14",
     "mocha": "^12.0.0-rc.5",
-    "nyc": "^18.0.0",
-    "qa-control": "^0.7.5",
+    "qa-control": "^0.8.1",
     "source-map-support": "^0.5.21",
     "typescript": "^5.9.2"
   },
@@ -31,31 +31,24 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "test": "npm run build && mocha --reporter spec --bail --check-leaks --exit",
-    "test-ci": "npm run build && nyc --reporter=lcov --reporter=text-summary --reporter=html mocha --exit --check-leaks",
+    "test": "npm run build && mocha --bail --check-leaks --exit",
+    "test-ci": "npm run build && c8 mocha --exit --check-leaks",
     "build": "tsc -p tsconfig-server.json && tsc -p tsconfig-test.json",
     "build-without-err": "(tsc -p tsconfig-server.json || echo \"continue w/error\") && (tsc -p tsconfig-test.json  || echo \"continue w/error\")"
   },
-  "nyc": {
-    "extension": [
-      ".js",
-      ".ts"
-    ],
+  "c8": {
     "exclude": [
       "**/*.d.ts",
       "src/test"
     ],
     "include": [
-      "dist/**/*.js",
-      "src/server/**"
+      "dist/**/*.js"
     ],
     "reporter": [
       "html",
       "lcov",
       "text-summary"
     ],
-    "sourceMap": true,
-    "instrument": true,
     "all": true,
     "check-coverage": true
   },
